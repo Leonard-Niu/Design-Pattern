@@ -1,5 +1,7 @@
 #include <iostream>
 
+using namespace std;
+
 class Apple {
 
 };
@@ -91,8 +93,92 @@ public:
     }
 };
 
-int main() {
+void SaladTest() {
     ISaladBuilder* saladBuilder1 = new SaladBuilder1();
     Salad* salad = SaladDirector::construct(saladBuilder1);
+}
+
+class Car {
+public:
+    void setCamera(string camera) {
+        mCamera = camera;
+    }
+    
+    void setEngine(string engine) {
+        mEngine = engine;
+    }
+
+    void setBrand(string brand) {
+        mBrand = brand;
+    }
+private:
+    std::string mCamera;
+    std::string mEngine;
+    std::string mBrand;
+};
+
+class ICarBuilder {
+public:
+    ICarBuilder() {
+        mCar = new Car();
+    }
+
+    virtual void buildCamera() = 0;
+    virtual void buildEngine() = 0;
+    virtual void buildBrand() = 0;
+
+    Car* build() {
+        return mCar;
+    }
+
+protected:
+    Car* mCar;
+};
+
+class ElecCarBuilder : public ICarBuilder {
+public:
+    virtual void buildEngine() {
+        mCar->setEngine("Electirc Car");
+    }
+};
+
+class GasCarBuilder : public ICarBuilder {
+public:
+    virtual void buildEngine() {
+        mCar->setEngine("Gasoline Car");
+    }
+};
+
+class BYDCarBuilder : public ElecCarBuilder {
+public:
+    virtual void buildBrand() {
+        mCar->setBrand("BYD");
+    }
+};
+
+class BYDKhanCarBuilder : public BYDCarBuilder {
+public:
+    virtual void buildCamera() {
+        mCar->setCamera("unsupported");
+    }
+};
+
+class CarDirector {
+public:
+    static Car* construct(ICarBuilder* carBuilder) {
+        carBuilder->buildBrand();
+        carBuilder->buildCamera();
+        carBuilder->buildEngine();
+        return carBuilder->build();
+    }
+};
+
+void CatTest() {
+    ICarBuilder* carBuidler = new BYDKhanCarBuilder();
+    Car* car = CarDirector::construct(carBuidler);
+}
+
+int main() {
+    CatTest();
     return 0;
 }
